@@ -15,7 +15,7 @@ Asegúrate de tener instalados los siguientes elementos en tu máquina:
 1. Clona el repositorio en tu máquina local:
 
    ```bash
-   git clone <URL_DEL_REPOSITORIO>
+   git clone https://github.com/Javier-Rivera2311/Eventos_cari_tipe3.git
    ```
 
 2. Navega al directorio del proyecto:
