@@ -42,6 +42,25 @@ flutter run
 
 Este comando compilará y ejecutará la aplicación en el dispositivo que tengas conectado o en el emulador.
 
+### **Actualizar el código del repositorio**
+
+Para asegurarte de que tienes la última versión del código, sigue estos pasos:
+
+1. Asegúrate de estar en la rama principal del repositorio (generalmente llamada `main`):
+
+   ```bash
+   git checkout main
+   ```
+
+2. Actualiza tu repositorio local con los últimos cambios desde el repositorio remoto:
+
+   ```bash
+   git pull origin main
+   ```
+
+Esto traerá las actualizaciones más recientes del repositorio remoto a tu copia local.
+
+
 ## Cómo contribuir
 
 Si deseas contribuir al proyecto, por favor sigue estos pasos:
@@ -67,6 +86,11 @@ Si deseas contribuir al proyecto, por favor sigue estos pasos:
    ```
 
 5. Abre un pull request desde tu fork al repositorio original.
+
+Claro, aquí tienes el paso para actualizar el código con `pull origin main`:
+
+---
+
 
 ## Licencia
 
