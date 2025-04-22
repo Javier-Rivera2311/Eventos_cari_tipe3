@@ -87,8 +87,6 @@ Si deseas contribuir al proyecto, por favor sigue estos pasos:
 
 5. Abre un pull request desde tu fork al repositorio original.
 
-Claro, aquí tienes el paso para actualizar el código con `pull origin main`:
-
 ---
 
 
