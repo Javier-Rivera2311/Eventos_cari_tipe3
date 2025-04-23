@@ -24,6 +24,7 @@ class _HomePageState extends State<HomePage> {
   ];
   
   final colors = [
+    
   Color(0xFFA8D5BA),
   Color(0xFF69B4A1),
   Color(0xFFA4D679),
