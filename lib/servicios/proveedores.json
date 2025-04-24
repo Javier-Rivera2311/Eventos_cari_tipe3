@@ -1,0 +1,17 @@
+[
+    {
+      "Nombre Proveedor": "Juan",
+      "Correo": "juan@example.com",
+      "Celular/Telefono": "12345678",
+      "Que provee": "Frutas",
+      "HistorialCompras": []
+    },
+    {
+      "Nombre Proveedor": "María",
+      "Correo": "maria@example.com",
+      "Celular/Telefono": "87654321",
+      "Que provee": "Verduras",
+      "HistorialCompras": []
+    }
+  ]
+  

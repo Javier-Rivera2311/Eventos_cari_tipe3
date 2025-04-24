@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'home.dart'; // Importa las pantallas
 import 'screen_3.dart';
-import 'screen_4.dart';
-import 'IngresosYGastos.dart';
+import 'ingresos_gastos.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'lista_proveedores.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -17,11 +17,12 @@ class _HomePageState extends State<HomePage> {
 
   // Lista de pantallas
   final screens = [
-    const HomeScreen(), // Llama la vista HomeScreen
-    const IngresosYGastosScreen(), // Llama la vista Screen2
-    const Screen3(), // Llama la vista Screen3
-    const Screen4(), // Llama la vista Screen4
+  const HomeScreen(),
+  const IngresosYGastosScreen(),
+  const Screen3(),
+  const ListaProveedoresScreen(), // ⬅️ NUEVA pantalla
   ];
+
 
   final colors = [
     Color(0xFFA8D5BA),
@@ -77,13 +78,14 @@ class _HomePageState extends State<HomePage> {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.person),
-              title: const Text('Vista 4'),
+              leading: const Icon(Icons.list),
+              title: const Text('Proveedores'),
               onTap: () {
-                setState(() => _currentIndex = 3);
-                Navigator.pop(context); // Cierra el drawer
+                setState(() => _currentIndex = 3); // índice correspondiente
+                Navigator.pop(context);
               },
             ),
+
           ],
         ),
       ),
@@ -118,8 +120,8 @@ class _HomePageState extends State<HomePage> {
               textColor: Colors.white,
             ),
             GButton(
-              icon: Icons.person,
-              text: 'Vista 4',
+              icon: Icons.list,
+              text: 'Proveedores',
               iconActiveColor: Colors.white,
               textColor: Colors.white,
             ),
