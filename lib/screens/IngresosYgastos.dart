@@ -1,8 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 
-class IngresosYGastosScreen extends StatelessWidget {
+class IngresosYGastosScreen extends StatefulWidget {
   const IngresosYGastosScreen({super.key});
+
+  @override
+  _IngresosYGastosScreenState createState() => _IngresosYGastosScreenState();
+}
+
+class _IngresosYGastosScreenState extends State<IngresosYGastosScreen> {
+  // Variables para almacenar los datos de ingresos y gastos
+  List<Map<String, dynamic>> movimientos = [];
+
+  // Función para agregar un nuevo movimiento de dinero
+  void _agregarMovimiento(Map<String, dynamic> movimiento) {
+    setState(() {
+      movimientos.add(movimiento);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,8 +37,9 @@ class IngresosYGastosScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) =>
-                          ComparativasScreen()), // Elimina 'const'
+                    builder: (context) =>
+                        ComparativasScreen(movimientos: movimientos),
+                  ),
                 );
               },
               child: const Text('Comparativas'),
@@ -35,8 +51,10 @@ class IngresosYGastosScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) =>
-                          FormularioDeRegistrosScreen()), // Elimina 'const'
+                    builder: (context) => FormularioDeRegistrosScreen(
+                      agregarMovimiento: _agregarMovimiento,
+                    ),
+                  ),
                 );
               },
               child: const Text('Formulario de Registros'),
@@ -48,8 +66,9 @@ class IngresosYGastosScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) =>
-                          ReporteFinancieroScreen()), // Elimina 'const'
+                    builder: (context) =>
+                        ReporteFinancieroScreen(movimientos: movimientos),
+                  ),
                 );
               },
               child: const Text('Reporte Financiero'),
@@ -61,40 +80,205 @@ class IngresosYGastosScreen extends StatelessWidget {
   }
 }
 
-// Vistas para cada uno de los botones
+class FormularioDeRegistrosScreen extends StatefulWidget {
+  final Function(Map<String, dynamic>) agregarMovimiento;
+
+  const FormularioDeRegistrosScreen(
+      {super.key, required this.agregarMovimiento});
+
+  @override
+  _FormularioDeRegistrosScreenState createState() =>
+      _FormularioDeRegistrosScreenState();
+}
+
+class _FormularioDeRegistrosScreenState
+    extends State<FormularioDeRegistrosScreen> {
+  final _descripcionController = TextEditingController();
+  final _montoController = TextEditingController();
+  String _categoria = 'Combustible';
+
+  final List<String> _categorias = [
+    'Combustible',
+    'Materiales',
+    'Servicios',
+    'Salarios',
+    'Otros'
+  ];
+
+  final _formKey = GlobalKey<FormState>();
+
+  void _guardarRegistro() {
+    if (_formKey.currentState?.validate() ?? false) {
+      final descripcion = _descripcionController.text;
+      final monto = double.tryParse(_montoController.text);
+      final fecha = DateTime.now();
+
+      if (monto != null) {
+        widget.agregarMovimiento({
+          'descripcion': descripcion,
+          'monto': monto,
+          'categoria': _categoria,
+          'fecha': fecha,
+        });
+
+        _descripcionController.clear();
+        _montoController.clear();
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Registro guardado exitosamente!')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Monto inválido')),
+        );
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Formulario de Registros'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextFormField(
+                controller: _descripcionController,
+                decoration: const InputDecoration(
+                  labelText: 'Descripción',
+                  hintText: 'Ejemplo: Compra de combustible',
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Por favor ingresa una descripción';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _montoController,
+                decoration: const InputDecoration(
+                  labelText: 'Monto (CLP)',
+                  hintText: 'Ejemplo: 1000',
+                ),
+                keyboardType: TextInputType.number,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Por favor ingresa un monto';
+                  }
+                  if (double.tryParse(value) == null) {
+                    return 'Por favor ingresa un número válido';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+              DropdownButtonFormField<String>(
+                value: _categoria,
+                decoration: const InputDecoration(labelText: 'Categoría'),
+                items: _categorias.map((categoria) {
+                  return DropdownMenuItem<String>(
+                    value: categoria,
+                    child: Text(categoria),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    _categoria = value!;
+                  });
+                },
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Por favor selecciona una categoría';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: _guardarRegistro,
+                child: const Text('Guardar Registro'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class ComparativasScreen extends StatefulWidget {
-  const ComparativasScreen({super.key});
+  final List<Map<String, dynamic>> movimientos;
+
+  const ComparativasScreen({super.key, required this.movimientos});
 
   @override
   _ComparativasScreenState createState() => _ComparativasScreenState();
 }
 
 class _ComparativasScreenState extends State<ComparativasScreen> {
-  // Variables para los datos del gráfico
-  List<FlSpot> monthlyData = [
-    FlSpot(0, 10),
-    FlSpot(1, 12),
-    FlSpot(2, 15),
-  ];
-  List<FlSpot> quarterlyData = [
-    FlSpot(0, 8),
-    FlSpot(1, 9),
-    FlSpot(2, 14),
-  ];
-  List<FlSpot> annualData = [
-    FlSpot(0, 20),
-    FlSpot(1, 25),
-    FlSpot(2, 30),
-  ];
+  List<FlSpot> monthlyData = [];
+  List<FlSpot> quarterlyData = [];
+  List<FlSpot> annualData = [];
 
-  // Variable para controlar los datos del gráfico
   late List<FlSpot> currentData;
 
   @override
   void initState() {
     super.initState();
-    // Inicializamos el gráfico con los datos mensuales
     currentData = monthlyData;
+    _calcularDatos();
+  }
+
+  void _calcularDatos() {
+    double ingresosMensuales = 0;
+    double gastosMensuales = 0;
+    double ingresosTrimestrales = 0;
+    double gastosTrimestrales = 0;
+    double ingresosAnuales = 0;
+    double gastosAnuales = 0;
+
+    for (var movimiento in widget.movimientos) {
+      double monto = movimiento['monto'];
+      DateTime fecha = movimiento['fecha'];
+      if (monto > 0) {
+        // Ingreso
+        if (fecha.month <= 3) {
+          ingresosMensuales += monto;
+          ingresosTrimestrales += monto;
+          ingresosAnuales += monto;
+        }
+      } else {
+        // Gasto
+        if (fecha.month <= 3) {
+          gastosMensuales += monto;
+          gastosTrimestrales += monto;
+          gastosAnuales += monto;
+        }
+      }
+    }
+
+    setState(() {
+      monthlyData = [
+        FlSpot(0, ingresosMensuales),
+        FlSpot(1, gastosMensuales),
+      ];
+      quarterlyData = [
+        FlSpot(0, ingresosTrimestrales),
+        FlSpot(1, gastosTrimestrales),
+      ];
+      annualData = [
+        FlSpot(0, ingresosAnuales),
+        FlSpot(1, gastosAnuales),
+      ];
+    });
   }
 
   @override
@@ -112,7 +296,6 @@ class _ComparativasScreenState extends State<ComparativasScreen> {
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 20),
-            // Lista de comparaciones entre algoritmos
             Expanded(
               child: ListView(
                 children: [
@@ -126,7 +309,6 @@ class _ComparativasScreenState extends State<ComparativasScreen> {
               ),
             ),
             const SizedBox(height: 20),
-            // Aquí mostramos el gráfico de líneas horizontal
             AspectRatio(
               aspectRatio: 1.5,
               child: LineChart(
@@ -136,48 +318,22 @@ class _ComparativasScreenState extends State<ComparativasScreen> {
                   gridData: FlGridData(show: true),
                   lineBarsData: [
                     LineChartBarData(
-                      spots: currentData, // Datos del gráfico
+                      spots: currentData,
                       isCurved: true,
-                      color: Colors.blue, // Color de la línea
+                      color: Colors.blue,
                       barWidth: 4,
-                      belowBarData: BarAreaData(
-                          show:
-                              false), // Opcional, para quitar área debajo de la línea
                     ),
                   ],
                 ),
               ),
             ),
             const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                // Lógica para ver más detalles de las comparativas
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      title: const Text('Detalles de Comparativa'),
-                      content: const Text(
-                          'Aquí irían los detalles de la comparación entre los algoritmos.'),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.pop(context),
-                          child: const Text('Cerrar'),
-                        ),
-                      ],
-                    );
-                  },
-                );
-              },
-              child: const Text('Ver más detalles'),
-            ),
           ],
         ),
       ),
     );
   }
 
-  // Método para construir los elementos de la lista de comparativas
   Widget _buildComparisonTile(
       String title, String description, String algorithm, List<FlSpot> data) {
     return Card(
@@ -189,8 +345,7 @@ class _ComparativasScreenState extends State<ComparativasScreen> {
         trailing: const Icon(Icons.arrow_forward),
         onTap: () {
           setState(() {
-            currentData =
-                data; // Actualizar los datos del gráfico según la opción seleccionada
+            currentData = data;
           });
         },
       ),
@@ -198,34 +353,33 @@ class _ComparativasScreenState extends State<ComparativasScreen> {
   }
 }
 
-class FormularioDeRegistrosScreen extends StatelessWidget {
-  const FormularioDeRegistrosScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Formulario de Registros'),
-      ),
-      body: const Center(
-        child: Text('Formulario de Registros', style: TextStyle(fontSize: 25)),
-      ),
-    );
-  }
-}
-
 class ReporteFinancieroScreen extends StatelessWidget {
-  const ReporteFinancieroScreen({super.key});
+  final List<Map<String, dynamic>> movimientos;
+
+  const ReporteFinancieroScreen({super.key, required this.movimientos});
 
   @override
   Widget build(BuildContext context) {
-    // Datos de ejemplo para el gráfico de barras (Ingresos vs Gastos)
+    double ingresos = 0;
+    double gastos = 0;
+    double saldo = 0;
+
+    for (var movimiento in movimientos) {
+      if (movimiento['monto'] > 0) {
+        ingresos += movimiento['monto'];
+      } else {
+        gastos += movimiento['monto'];
+      }
+    }
+
+    saldo = ingresos + gastos;
+
     List<BarChartGroupData> barChartData = [
       BarChartGroupData(x: 0, barRods: [
-        BarChartRodData(toY: 5000, color: Colors.green), // Ingresos
+        BarChartRodData(toY: ingresos, color: Colors.green),
       ]),
       BarChartGroupData(x: 1, barRods: [
-        BarChartRodData(toY: 2000, color: Colors.red), // Gastos
+        BarChartRodData(toY: gastos, color: Colors.red),
       ]),
     ];
 
@@ -238,16 +392,13 @@ class ReporteFinancieroScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Resumen de ingresos, gastos y saldo
             const Text(
               'Resumen Financiero:',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 20),
-            _buildFinancialSummary(),
+            _buildFinancialSummary(ingresos, gastos, saldo),
             const SizedBox(height: 20),
-
-            // Gráfico de barras de ingresos y gastos
             const Text(
               'Distribución de Ingresos y Gastos:',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -265,22 +416,20 @@ class ReporteFinancieroScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
-
-            // Lista de transacciones
             const Text(
               'Transacciones recientes:',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
             Expanded(
-              child: ListView(
-                children: [
-                  _buildTransactionTile('Venta de Producto', 1000, 'Ingreso'),
-                  _buildTransactionTile('Compra de insumos', -500, 'Gasto'),
-                  _buildTransactionTile('Pago de alquiler', -800, 'Gasto'),
-                  _buildTransactionTile(
-                      'Servicio de publicidad', -200, 'Gasto'),
-                ],
+              child: ListView.builder(
+                itemCount: movimientos.length,
+                itemBuilder: (context, index) {
+                  return _buildTransactionTile(
+                      movimientos[index]['descripcion'],
+                      movimientos[index]['monto'],
+                      movimientos[index]['categoria']);
+                },
               ),
             ),
           ],
@@ -289,12 +438,7 @@ class ReporteFinancieroScreen extends StatelessWidget {
     );
   }
 
-  // Widget para el resumen financiero
-  Widget _buildFinancialSummary() {
-    double ingresos = 10000; // Ejemplo de ingresos
-    double gastos = 5000; // Ejemplo de gastos
-    double saldo = ingresos - gastos;
-
+  Widget _buildFinancialSummary(double ingresos, double gastos, double saldo) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -305,7 +449,6 @@ class ReporteFinancieroScreen extends StatelessWidget {
     );
   }
 
-  // Widget para construir cada fila del resumen financiero
   Widget _buildSummaryRow(String label, double amount) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0),
@@ -325,7 +468,6 @@ class ReporteFinancieroScreen extends StatelessWidget {
     );
   }
 
-  // Widget para construir cada transacción de la lista
   Widget _buildTransactionTile(String description, double amount, String type) {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8.0),
