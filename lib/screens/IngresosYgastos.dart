@@ -9,13 +9,17 @@ class IngresosYGastosScreen extends StatefulWidget {
 }
 
 class _IngresosYGastosScreenState extends State<IngresosYGastosScreen> {
-  // Variables para almacenar los datos de ingresos y gastos
   List<Map<String, dynamic>> movimientos = [];
 
-  // Función para agregar un nuevo movimiento de dinero
   void _agregarMovimiento(Map<String, dynamic> movimiento) {
     setState(() {
       movimientos.add(movimiento);
+    });
+  }
+
+  void _eliminarMovimiento(Map<String, dynamic> movimiento) {
+    setState(() {
+      movimientos.remove(movimiento);
     });
   }
 
@@ -25,15 +29,13 @@ class _IngresosYGastosScreenState extends State<IngresosYGastosScreen> {
       appBar: AppBar(
         title: const Text('Ingresos y Gastos'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             ElevatedButton(
               onPressed: () {
-                // Navegar a la vista de Comparativas
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -47,12 +49,13 @@ class _IngresosYGastosScreenState extends State<IngresosYGastosScreen> {
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
-                // Navegar a la vista de Formulario de Registros
                 Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => FormularioDeRegistrosScreen(
                       agregarMovimiento: _agregarMovimiento,
+                      eliminarMovimiento: _eliminarMovimiento,
+                      movimientos: movimientos,
                     ),
                   ),
                 );
@@ -62,7 +65,6 @@ class _IngresosYGastosScreenState extends State<IngresosYGastosScreen> {
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
-                // Navegar a la vista de Reporte Financiero
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -80,11 +82,22 @@ class _IngresosYGastosScreenState extends State<IngresosYGastosScreen> {
   }
 }
 
+// Nota: Asegúrate de no tener otra llamada a FormularioDeRegistrosScreen() en otro archivo
+// sin los parámetros requeridos. Este error ocurre si en otro lado del código haces algo como:
+// Navigator.push(context, MaterialPageRoute(builder: (_) => FormularioDeRegistrosScreen()));
+// Esa llamada también debe incluir los tres parámetros requeridos.
+
 class FormularioDeRegistrosScreen extends StatefulWidget {
   final Function(Map<String, dynamic>) agregarMovimiento;
+  final Function(Map<String, dynamic>) eliminarMovimiento;
+  final List<Map<String, dynamic>> movimientos;
 
-  const FormularioDeRegistrosScreen(
-      {super.key, required this.agregarMovimiento});
+  const FormularioDeRegistrosScreen({
+    super.key,
+    required this.agregarMovimiento,
+    required this.eliminarMovimiento,
+    required this.movimientos,
+  });
 
   @override
   _FormularioDeRegistrosScreenState createState() =>
@@ -137,77 +150,151 @@ class _FormularioDeRegistrosScreenState
 
   @override
   Widget build(BuildContext context) {
+    final transacciones = widget.movimientos
+        .where((mov) => mov['monto'] != null)
+        .toList()
+      ..sort((a, b) => b['fecha'].compareTo(a['fecha']));
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Formulario de Registros'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              TextFormField(
-                controller: _descripcionController,
-                decoration: const InputDecoration(
-                  labelText: 'Descripción',
-                  hintText: 'Ejemplo: Compra de combustible',
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Por favor ingresa una descripción';
-                  }
-                  return null;
-                },
+        child: Column(
+          children: [
+            Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TextFormField(
+                    controller: _descripcionController,
+                    decoration: const InputDecoration(
+                      labelText: 'Descripción',
+                      hintText: 'Ejemplo: Compra de combustible',
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor ingresa una descripción';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _montoController,
+                    decoration: const InputDecoration(
+                      labelText: 'Monto (CLP)',
+                      hintText: 'Ejemplo: 1000 (ingreso) o -500 (gasto)',
+                    ),
+                    keyboardType: TextInputType.number,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor ingresa un monto';
+                      }
+                      if (double.tryParse(value) == null) {
+                        return 'Por favor ingresa un número válido';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  DropdownButtonFormField<String>(
+                    value: _categoria,
+                    decoration: const InputDecoration(labelText: 'Categoría'),
+                    items: _categorias.map((categoria) {
+                      return DropdownMenuItem<String>(
+                        value: categoria,
+                        child: Text(categoria),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        _categoria = value!;
+                      });
+                    },
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor selecciona una categoría';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: _guardarRegistro,
+                    child: const Text('Guardar Registro'),
+                  ),
+                ],
               ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _montoController,
-                decoration: const InputDecoration(
-                  labelText: 'Monto (CLP)',
-                  hintText: 'Ejemplo: 1000',
-                ),
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Por favor ingresa un monto';
-                  }
-                  if (double.tryParse(value) == null) {
-                    return 'Por favor ingresa un número válido';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-              DropdownButtonFormField<String>(
-                value: _categoria,
-                decoration: const InputDecoration(labelText: 'Categoría'),
-                items: _categorias.map((categoria) {
-                  return DropdownMenuItem<String>(
-                    value: categoria,
-                    child: Text(categoria),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  setState(() {
-                    _categoria = value!;
-                  });
-                },
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Por favor selecciona una categoría';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _guardarRegistro,
-                child: const Text('Guardar Registro'),
-              ),
-            ],
-          ),
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              'Movimientos recientes:',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+            Expanded(
+              child: transacciones.isEmpty
+                  ? const Center(child: Text('No hay movimientos aún.'))
+                  : ListView.builder(
+                      itemCount: transacciones.length,
+                      itemBuilder: (context, index) {
+                        final mov = transacciones[index];
+                        final DateTime fecha = mov['fecha'];
+                        final String tipo =
+                            mov['monto'] >= 0 ? 'Ingreso' : 'Gasto';
+
+                        return Card(
+                          child: ListTile(
+                            title: Text(mov['descripcion']),
+                            subtitle: Text(
+                                '$tipo - ${mov['categoria']} - ${fecha.day}/${fecha.month}/${fecha.year}'),
+                            trailing: Text(
+                              '\$${mov['monto'].toStringAsFixed(2)}',
+                              style: TextStyle(
+                                color: mov['monto'] >= 0
+                                    ? Colors.green
+                                    : Colors.red,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            onTap: () async {
+                              final confirm = await showDialog<bool>(
+                                context: context,
+                                builder: (ctx) => AlertDialog(
+                                  title: const Text('¿Eliminar movimiento?'),
+                                  content: const Text(
+                                      '¿Estás seguro de eliminar este movimiento?'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () =>
+                                          Navigator.pop(ctx, false),
+                                      child: const Text('Cancelar'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(ctx, true),
+                                      child: const Text('Eliminar'),
+                                    ),
+                                  ],
+                                ),
+                              );
+
+                              if (confirm == true) {
+                                widget.eliminarMovimiento(mov);
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text('Movimiento eliminado')),
+                                );
+                              }
+                            },
+                          ),
+                        );
+                      },
+                    ),
+            ),
+          ],
         ),
       ),
     );
