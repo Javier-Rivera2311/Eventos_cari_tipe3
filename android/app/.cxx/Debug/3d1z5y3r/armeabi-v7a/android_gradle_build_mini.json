@@ -1,0 +1,20 @@
+{
+  "buildFiles": [
+    "/Users/bladjot/development/flutter/packages/flutter_tools/gradle/src/main/groovy/CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "/Users/bladjot/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+      "-C",
+      "/Users/bladjot/Eventos_cari_tipe3-5/android/app/.cxx/Debug/3d1z5y3r/armeabi-v7a",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "/Users/bladjot/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+    "-C",
+    "/Users/bladjot/Eventos_cari_tipe3-5/android/app/.cxx/Debug/3d1z5y3r/armeabi-v7a",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {}
+}

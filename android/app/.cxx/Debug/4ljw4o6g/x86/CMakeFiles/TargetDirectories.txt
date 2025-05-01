@@ -1,0 +1,2 @@
+/Users/bladjot/Eventos_cari_tipe3/Eventos_cari_tipe3/android/app/.cxx/Debug/4ljw4o6g/x86/CMakeFiles/edit_cache.dir
+/Users/bladjot/Eventos_cari_tipe3/Eventos_cari_tipe3/android/app/.cxx/Debug/4ljw4o6g/x86/CMakeFiles/rebuild_cache.dir
