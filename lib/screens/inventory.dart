@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../widgets/admission_form.dart';
 import '../widgets/withdrawal_form.dart';
 import '../widgets/inventory_history.dart';
+import '../widgets/alert_stock_inventory.dart';
 
 class InventoryScreen extends StatefulWidget {
   const InventoryScreen({super.key});
@@ -28,6 +29,11 @@ class _InventoryScreenState extends State<InventoryScreen> {
   void initState() {
     super.initState();
     filteredInventory = inventory; // Inicialmente muestra todo el inventario
+
+    // Verifica el stock bajo al iniciar la pantalla
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkLowStock();
+    });
   }
 
   // Método para filtrar el inventario
@@ -43,6 +49,44 @@ class _InventoryScreenState extends State<InventoryScreen> {
             .toList();
       }
     });
+  }
+
+  // Método para verificar el stock bajo
+  void _checkLowStock() {
+    final lowStockItems = inventory
+        .where((item) => int.parse(item['cantidad']!) < 10)
+        .toList();
+
+    if (lowStockItems.isNotEmpty) {
+      _showLowStockAlert(lowStockItems);
+    }
+  }
+
+  // Muestra una alerta visual en la aplicación
+  void _showLowStockAlert(List<Map<String, String>> lowStockItems) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Alerta de Stock Bajo'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: lowStockItems.map((item) {
+              return Text(
+                  '${item['nombre']} tiene solo ${item['cantidad']} unidades.');
+            }).toList(),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Aceptar'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
