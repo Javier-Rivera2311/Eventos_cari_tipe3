@@ -29,55 +29,92 @@ class _IngresosYGastosScreenState extends State<IngresosYGastosScreen> {
       appBar: AppBar(
         title: const Text('Ingresos y Gastos'),
       ),
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
+      body: VistaBotonesBonitos(
+        onComparativas: () => Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => ComparativasScreen(movimientos: movimientos),
+          ),
+        ),
+        onFormulario: () => Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => FormularioDeRegistrosScreen(
+              agregarMovimiento: _agregarMovimiento,
+              eliminarMovimiento: _eliminarMovimiento,
+              movimientos: movimientos,
+            ),
+          ),
+        ),
+        onReporte: () => Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => ReporteFinancieroScreen(movimientos: movimientos),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class VistaBotonesBonitos extends StatelessWidget {
+  final VoidCallback onComparativas;
+  final VoidCallback onFormulario;
+  final VoidCallback onReporte;
+
+  const VistaBotonesBonitos({
+    super.key,
+    required this.onComparativas,
+    required this.onFormulario,
+    required this.onReporte,
+  });
+
+  Widget _buildBoton(Color color, IconData icon, String titulo,
+      String subtitulo, VoidCallback onPressed) {
+    return GestureDetector(
+      onTap: onPressed,
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(24),
+        ),
+        child: Row(
           children: [
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        ComparativasScreen(movimientos: movimientos),
-                  ),
-                );
-              },
-              child: const Text('Comparativas'),
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => FormularioDeRegistrosScreen(
-                      agregarMovimiento: _agregarMovimiento,
-                      eliminarMovimiento: _eliminarMovimiento,
-                      movimientos: movimientos,
-                    ),
-                  ),
-                );
-              },
-              child: const Text('Formulario de Registros'),
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        ReporteFinancieroScreen(movimientos: movimientos),
-                  ),
-                );
-              },
-              child: const Text('Reporte Financiero'),
+            Icon(icon, color: Colors.white, size: 40),
+            const SizedBox(width: 20),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(titulo,
+                    style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold)),
+                Text(subtitulo,
+                    style:
+                        const TextStyle(color: Colors.white70, fontSize: 12)),
+              ],
             ),
           ],
         ),
       ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      padding: const EdgeInsets.symmetric(vertical: 40),
+      children: [
+        _buildBoton(Colors.teal.shade600, Icons.bar_chart, 'Comparativas',
+            'Lineas', onComparativas),
+        _buildBoton(Colors.teal.shade800, Icons.receipt_long,
+            'Formulario de Registro', '', onFormulario),
+        _buildBoton(Colors.teal.shade900, Icons.insert_chart,
+            'Reporte Financiero', '', onReporte),
+      ],
     );
   }
 }
@@ -158,143 +195,178 @@ class _FormularioDeRegistrosScreenState
     return Scaffold(
       appBar: AppBar(
         title: const Text('Formulario de Registros'),
+        backgroundColor: Colors.teal,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  TextFormField(
-                    controller: _descripcionController,
-                    decoration: const InputDecoration(
-                      labelText: 'Descripción',
-                      hintText: 'Ejemplo: Compra de combustible',
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Por favor ingresa una descripción';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    controller: _montoController,
-                    decoration: const InputDecoration(
-                      labelText: 'Monto (CLP)',
-                      hintText: 'Ejemplo: 1000 (ingreso) o -500 (gasto)',
-                    ),
-                    keyboardType: TextInputType.number,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Por favor ingresa un monto';
-                      }
-                      if (double.tryParse(value) == null) {
-                        return 'Por favor ingresa un número válido';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  DropdownButtonFormField<String>(
-                    value: _categoria,
-                    decoration: const InputDecoration(labelText: 'Categoría'),
-                    items: _categorias.map((categoria) {
-                      return DropdownMenuItem<String>(
-                        value: categoria,
-                        child: Text(categoria),
-                      );
-                    }).toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        _categoria = value!;
-                      });
-                    },
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Por favor selecciona una categoría';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: _guardarRegistro,
-                    child: const Text('Guardar Registro'),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 20),
-            const Text(
-              'Movimientos recientes:',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 10),
-            Expanded(
-              child: transacciones.isEmpty
-                  ? const Center(child: Text('No hay movimientos aún.'))
-                  : ListView.builder(
-                      itemCount: transacciones.length,
-                      itemBuilder: (context, index) {
-                        final mov = transacciones[index];
-                        final DateTime fecha = mov['fecha'];
-                        final String tipo =
-                            mov['monto'] >= 0 ? 'Ingreso' : 'Gasto';
-
-                        return Card(
-                          child: ListTile(
-                            title: Text(mov['descripcion']),
-                            subtitle: Text(
-                                '$tipo - ${mov['categoria']} - ${fecha.day}/${fecha.month}/${fecha.year}'),
-                            trailing: Text(
-                              '\$${mov['monto'].toStringAsFixed(2)}',
-                              style: TextStyle(
-                                color: mov['monto'] >= 0
-                                    ? Colors.green
-                                    : Colors.red,
-                                fontWeight: FontWeight.bold,
-                              ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              Card(
+                elevation: 6,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      children: [
+                        TextFormField(
+                          controller: _descripcionController,
+                          decoration: InputDecoration(
+                            labelText: 'Descripción',
+                            hintText: 'Ejemplo: Compra de combustible',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
                             ),
-                            onTap: () async {
-                              final confirm = await showDialog<bool>(
-                                context: context,
-                                builder: (ctx) => AlertDialog(
-                                  title: const Text('¿Eliminar movimiento?'),
-                                  content: const Text(
-                                      '¿Estás seguro de eliminar este movimiento?'),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () =>
-                                          Navigator.pop(ctx, false),
-                                      child: const Text('Cancelar'),
-                                    ),
-                                    TextButton(
-                                      onPressed: () => Navigator.pop(ctx, true),
-                                      child: const Text('Eliminar'),
-                                    ),
-                                  ],
-                                ),
-                              );
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Por favor ingresa una descripción';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 16),
+                        TextFormField(
+                          controller: _montoController,
+                          decoration: InputDecoration(
+                            labelText: 'Monto (CLP)',
+                            hintText: 'Ejemplo: 1000 (ingreso) o -500 (gasto)',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          keyboardType: TextInputType.number,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Por favor ingresa un monto';
+                            }
+                            if (double.tryParse(value) == null) {
+                              return 'Por favor ingresa un número válido';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 16),
+                        DropdownButtonFormField<String>(
+                          value: _categoria,
+                          decoration: InputDecoration(
+                            labelText: 'Categoría',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          items: _categorias.map((categoria) {
+                            return DropdownMenuItem<String>(
+                              value: categoria,
+                              child: Text(categoria),
+                            );
+                          }).toList(),
+                          onChanged: (value) {
+                            setState(() {
+                              _categoria = value!;
+                            });
+                          },
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Por favor selecciona una categoría';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 20),
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.teal,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                            ),
+                            onPressed: _guardarRegistro,
+                            child: const Text(
+                              'Guardar Registro',
+                              style: TextStyle(fontSize: 16),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              const Text(
+                'Movimientos recientes:',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 10),
+              ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: transacciones.length,
+                itemBuilder: (context, index) {
+                  final mov = transacciones[index];
+                  final DateTime fecha = mov['fecha'];
+                  final String tipo = mov['monto'] >= 0 ? 'Ingreso' : 'Gasto';
 
-                              if (confirm == true) {
-                                widget.eliminarMovimiento(mov);
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content: Text('Movimiento eliminado')),
-                                );
-                              }
-                            },
+                  return Card(
+                    elevation: 4,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: ListTile(
+                      title: Text(mov['descripcion']),
+                      subtitle: Text(
+                        '$tipo - ${mov['categoria']} - ${fecha.day}/${fecha.month}/${fecha.year}',
+                      ),
+                      trailing: Text(
+                        '\$${mov['monto'].toStringAsFixed(2)}',
+                        style: TextStyle(
+                          color: mov['monto'] >= 0 ? Colors.green : Colors.red,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      onTap: () async {
+                        final confirm = await showDialog<bool>(
+                          context: context,
+                          builder: (ctx) => AlertDialog(
+                            title: const Text('¿Eliminar movimiento?'),
+                            content: const Text(
+                                '¿Estás seguro de eliminar este movimiento?'),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(ctx, false),
+                                child: const Text('Cancelar'),
+                              ),
+                              TextButton(
+                                onPressed: () => Navigator.pop(ctx, true),
+                                child: const Text('Eliminar'),
+                              ),
+                            ],
                           ),
                         );
+
+                        if (confirm == true) {
+                          widget.eliminarMovimiento(mov);
+                          setState(() {});
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('Movimiento eliminado')),
+                          );
+                        }
                       },
                     ),
-            ),
-          ],
+                  );
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -336,14 +408,12 @@ class _ComparativasScreenState extends State<ComparativasScreen> {
       double monto = movimiento['monto'];
       DateTime fecha = movimiento['fecha'];
       if (monto > 0) {
-        // Ingreso
         if (fecha.month <= 3) {
           ingresosMensuales += monto;
           ingresosTrimestrales += monto;
           ingresosAnuales += monto;
         }
       } else {
-        // Gasto
         if (fecha.month <= 3) {
           gastosMensuales += monto;
           gastosTrimestrales += monto;
@@ -353,49 +423,54 @@ class _ComparativasScreenState extends State<ComparativasScreen> {
     }
 
     setState(() {
-      monthlyData = [
-        FlSpot(0, ingresosMensuales),
-        FlSpot(1, gastosMensuales),
-      ];
+      monthlyData = [FlSpot(0, ingresosMensuales), FlSpot(1, gastosMensuales)];
       quarterlyData = [
         FlSpot(0, ingresosTrimestrales),
-        FlSpot(1, gastosTrimestrales),
+        FlSpot(1, gastosTrimestrales)
       ];
-      annualData = [
-        FlSpot(0, ingresosAnuales),
-        FlSpot(1, gastosAnuales),
-      ];
+      annualData = [FlSpot(0, ingresosAnuales), FlSpot(1, gastosAnuales)];
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final cardStyle = BoxDecoration(
+      color: const Color(0xFF356E73),
+      borderRadius: BorderRadius.circular(24),
+    );
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Comparativas'),
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            const Text(
-              'Comparativas de Datos:',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            _buildStyledCard(
+              title: 'Mensual',
+              description: 'Mejor rendimiento',
+              icon: Icons.calendar_today,
+              data: monthlyData,
+              color: const Color(0xFF4FA6B8),
             ),
-            const SizedBox(height: 20),
-            Expanded(
-              child: ListView(
-                children: [
-                  _buildComparisonTile(
-                      'Mensual', 'Mejor rendimiento', 'PSO', monthlyData),
-                  _buildComparisonTile(
-                      'Trimestral', 'Mejor en eficiencia', 'GA', quarterlyData),
-                  _buildComparisonTile(
-                      'Anual', 'Mejor en precisión', 'APO', annualData),
-                ],
-              ),
+            const SizedBox(height: 16),
+            _buildStyledCard(
+              title: 'Trimestral',
+              description: 'Mejor en eficiencia',
+              icon: Icons.pie_chart,
+              data: quarterlyData,
+              color: const Color(0xFF336D7B),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 16),
+            _buildStyledCard(
+              title: 'Anual',
+              description: 'Mejor en precisión',
+              icon: Icons.bar_chart,
+              data: annualData,
+              color: const Color(0xFF275664),
+            ),
+            const SizedBox(height: 24),
             AspectRatio(
               aspectRatio: 1.5,
               child: LineChart(
@@ -407,34 +482,60 @@ class _ComparativasScreenState extends State<ComparativasScreen> {
                     LineChartBarData(
                       spots: currentData,
                       isCurved: true,
-                      color: Colors.blue,
+                      color: Colors.blueAccent,
                       barWidth: 4,
                     ),
                   ],
                 ),
               ),
             ),
-            const SizedBox(height: 20),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildComparisonTile(
-      String title, String description, String algorithm, List<FlSpot> data) {
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 8.0),
-      child: ListTile(
-        title: Text(title),
-        subtitle: Text('$description ($algorithm)'),
-        leading: const Icon(Icons.compare_arrows),
-        trailing: const Icon(Icons.arrow_forward),
-        onTap: () {
-          setState(() {
-            currentData = data;
-          });
-        },
+  Widget _buildStyledCard({
+    required String title,
+    required String description,
+    required IconData icon,
+    required List<FlSpot> data,
+    required Color color,
+  }) {
+    return InkWell(
+      onTap: () {
+        setState(() {
+          currentData = data;
+        });
+      },
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(24),
+        ),
+        child: Row(
+          children: [
+            Icon(icon, size: 36, color: Colors.white),
+            const SizedBox(width: 16),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    )),
+                Text(description,
+                    style: const TextStyle(
+                      color: Colors.white70,
+                      fontSize: 14,
+                    )),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -471,8 +572,11 @@ class ReporteFinancieroScreen extends StatelessWidget {
     ];
 
     return Scaffold(
+      backgroundColor: const Color(0xFFF9F9F9),
       appBar: AppBar(
         title: const Text('Reporte Financiero'),
+        backgroundColor: Colors.deepPurple,
+        foregroundColor: Colors.white,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -481,41 +585,72 @@ class ReporteFinancieroScreen extends StatelessWidget {
           children: [
             const Text(
               'Resumen Financiero:',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.deepPurple),
             ),
-            const SizedBox(height: 20),
-            _buildFinancialSummary(ingresos, gastos, saldo),
-            const SizedBox(height: 20),
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 8,
+                      offset: Offset(0, 4))
+                ],
+              ),
+              child: _buildFinancialSummary(ingresos, gastos, saldo),
+            ),
+            const SizedBox(height: 24),
             const Text(
               'Distribución de Ingresos y Gastos:',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.deepPurple),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 12),
             AspectRatio(
               aspectRatio: 1.5,
-              child: BarChart(
-                BarChartData(
-                  borderData: FlBorderData(show: true),
-                  titlesData: FlTitlesData(show: false),
-                  gridData: FlGridData(show: true),
-                  barGroups: barChartData,
+              child: Card(
+                elevation: 3,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: BarChart(
+                    BarChartData(
+                      borderData: FlBorderData(show: false),
+                      titlesData: FlTitlesData(show: false),
+                      gridData: FlGridData(show: true),
+                      barGroups: barChartData,
+                    ),
+                  ),
                 ),
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 24),
             const Text(
               'Transacciones recientes:',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.deepPurple),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 12),
             Expanded(
               child: ListView.builder(
                 itemCount: movimientos.length,
                 itemBuilder: (context, index) {
                   return _buildTransactionTile(
-                      movimientos[index]['descripcion'],
-                      movimientos[index]['monto'],
-                      movimientos[index]['categoria']);
+                    movimientos[index]['descripcion'],
+                    movimientos[index]['monto'],
+                    movimientos[index]['categoria'],
+                  );
                 },
               ),
             ),
@@ -529,26 +664,28 @@ class ReporteFinancieroScreen extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildSummaryRow('Ingresos:', ingresos),
-        _buildSummaryRow('Gastos:', gastos),
-        _buildSummaryRow('Saldo:', saldo),
+        _buildSummaryRow('Ingresos:', ingresos, Colors.green),
+        _buildSummaryRow('Gastos:', gastos, Colors.red),
+        _buildSummaryRow('Saldo:', saldo, Colors.deepPurple),
       ],
     );
   }
 
-  Widget _buildSummaryRow(String label, double amount) {
+  Widget _buildSummaryRow(String label, double amount, Color color) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      padding: const EdgeInsets.symmetric(vertical: 6.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
             label,
-            style: const TextStyle(fontSize: 16),
+            style: TextStyle(
+                fontSize: 16, fontWeight: FontWeight.w500, color: color),
           ),
           Text(
             '\$${amount.toStringAsFixed(2)}',
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            style: TextStyle(
+                fontSize: 16, fontWeight: FontWeight.bold, color: color),
           ),
         ],
       ),
@@ -557,9 +694,16 @@ class ReporteFinancieroScreen extends StatelessWidget {
 
   Widget _buildTransactionTile(String description, double amount, String type) {
     return Card(
-      margin: const EdgeInsets.symmetric(vertical: 8.0),
+      elevation: 2,
+      margin: const EdgeInsets.symmetric(vertical: 6.0),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: ListTile(
-        title: Text(description),
+        leading: Icon(
+          amount >= 0 ? Icons.arrow_downward : Icons.arrow_upward,
+          color: amount >= 0 ? Colors.green : Colors.red,
+        ),
+        title: Text(description,
+            style: const TextStyle(fontWeight: FontWeight.w600)),
         subtitle: Text(type),
         trailing: Text(
           '\$${amount.toStringAsFixed(2)}',
