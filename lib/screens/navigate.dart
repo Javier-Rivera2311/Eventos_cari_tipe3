@@ -118,19 +118,19 @@ class _HomePageState extends State<HomePage> {
             ),
             GButton(
               icon: Icons.analytics,
-              text: 'Vista 2',
+              text: 'Ingresos y gastos',
               iconActiveColor: Colors.white,
               textColor: Colors.white,
             ),
             GButton(
               icon: Icons.inventory,
-              text: 'Vista 3',
+              text: 'Inventario',
               iconActiveColor: Colors.white,
               textColor: Colors.white,
             ),
             GButton(
               icon: Icons.person,
-              text: 'Vista 4',
+              text: 'Clientes',
               iconActiveColor: Colors.white,
               textColor: Colors.white,
             ),
