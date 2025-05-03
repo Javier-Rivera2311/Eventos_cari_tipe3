@@ -3,6 +3,7 @@ import 'home.dart'; // Importa las pantallas
 import 'screen_3.dart';
 import 'screen_4.dart';
 import 'IngresosYGastos.dart';
+import 'inventory.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 
 class HomePage extends StatefulWidget {
@@ -19,6 +20,7 @@ class _HomePageState extends State<HomePage> {
   final screens = [
     const HomeScreen(), // Llama la vista HomeScreen
     const IngresosYGastosScreen(), // Llama la vista Screen2
+    const InventoryScreen(),
     const Screen3(), // Llama la vista Screen3
     const Screen4(), // Llama la vista Screen4
   ];
@@ -27,6 +29,7 @@ class _HomePageState extends State<HomePage> {
     Color(0xFFA8D5BA),
     Color(0xFF69B4A1),
     Color(0xFFA4D679),
+    Color(0xFF3A7F54),
     Color(0xFF3A7F54)
   ];
 
@@ -62,7 +65,7 @@ class _HomePageState extends State<HomePage> {
             ),
             ListTile(
               leading: const Icon(Icons.analytics),
-              title: const Text('Vista 2'),
+              title: const Text('Ingresos Y Gastos'),
               onTap: () {
                 setState(() => _currentIndex = 1);
                 Navigator.pop(context); // Cierra el drawer
@@ -70,7 +73,7 @@ class _HomePageState extends State<HomePage> {
             ),
             ListTile(
               leading: const Icon(Icons.inventory),
-              title: const Text('Vista 3'),
+              title: const Text('Inventario'),
               onTap: () {
                 setState(() => _currentIndex = 2);
                 Navigator.pop(context); // Cierra el drawer
@@ -78,9 +81,17 @@ class _HomePageState extends State<HomePage> {
             ),
             ListTile(
               leading: const Icon(Icons.person),
-              title: const Text('Vista 4'),
+              title: const Text('Clientes'),
               onTap: () {
                 setState(() => _currentIndex = 3);
+                Navigator.pop(context); // Cierra el drawer
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.person),
+              title: const Text('Personal'),
+              onTap: () {
+                setState(() => _currentIndex = 4);
                 Navigator.pop(context); // Cierra el drawer
               },
             ),
