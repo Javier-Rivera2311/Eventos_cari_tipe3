@@ -1,17 +1,32 @@
 import 'package:flutter/material.dart';
 import '../widgets/admission_form.dart';
 import '../widgets/withdrawal_form.dart';
-
+import '../widgets/inventory_history.dart';
 class InventoryScreen extends StatelessWidget {
   const InventoryScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Inventario'),
-        centerTitle: true,
-      ),
+appBar: AppBar(
+  title: const Text('Inventario'),
+  centerTitle: true,
+  actions: [
+    IconButton(
+      icon: const Icon(Icons.history),
+      tooltip: 'Ver historial',
+      onPressed: () {
+        // Navegar a la pantalla del historial
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const InventoryHistory(), // Asegúrate de importar InventoryHistory
+          ),
+        );
+      },
+    ),
+  ],
+),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
