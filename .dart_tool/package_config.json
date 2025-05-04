@@ -188,7 +188,9 @@
       "languageVersion": "3.6"
     }
   ],
+
   "generated": "2025-05-03T22:57:46.050717Z",
+
   "generator": "pub",
   "generatorVersion": "3.7.2",
   "flutterRoot": "file:///Users/bladjot/development/flutter",
