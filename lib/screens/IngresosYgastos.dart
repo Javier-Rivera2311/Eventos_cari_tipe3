@@ -26,32 +26,58 @@ class _IngresosYGastosScreenState extends State<IngresosYGastosScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Ingresos y Gastos'),
-      ),
-      body: VistaBotonesBonitos(
-        onComparativas: () => Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => ComparativasScreen(movimientos: movimientos),
-          ),
-        ),
-        onFormulario: () => Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => FormularioDeRegistrosScreen(
-              agregarMovimiento: _agregarMovimiento,
-              eliminarMovimiento: _eliminarMovimiento,
-              movimientos: movimientos,
+      backgroundColor: const Color(0xFFF9F9F9),
+      body: Column(
+        children: [
+          Container(
+            height: 100,
+            width: double.infinity,
+            decoration: const BoxDecoration(
+              color: Colors.teal,
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(30),
+                bottomRight: Radius.circular(30),
+              ),
+            ),
+            padding: const EdgeInsets.only(top: 10, left: 80),
+            alignment: Alignment.centerLeft,
+            child: const Text(
+              'Ingresos y Gastos',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 26,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
-        ),
-        onReporte: () => Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => ReporteFinancieroScreen(movimientos: movimientos),
+          Expanded(
+            child: VistaBotonesBonitos(
+              onComparativas: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => ComparativasScreen(movimientos: movimientos),
+                ),
+              ),
+              onFormulario: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => FormularioDeRegistrosScreen(
+                    agregarMovimiento: _agregarMovimiento,
+                    eliminarMovimiento: _eliminarMovimiento,
+                    movimientos: movimientos,
+                  ),
+                ),
+              ),
+              onReporte: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) =>
+                      ReporteFinancieroScreen(movimientos: movimientos),
+                ),
+              ),
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -118,6 +144,8 @@ class VistaBotonesBonitos extends StatelessWidget {
     );
   }
 }
+
+// Las demás clases como ComparativasScreen, FormularioDeRegistrosScreen, ReporteFinancieroScreen deben estar ya definidas como parte de tu app.
 
 // Nota: Asegúrate de no tener otra llamada a FormularioDeRegistrosScreen() en otro archivo
 // sin los parámetros requeridos. Este error ocurre si en otro lado del código haces algo como:

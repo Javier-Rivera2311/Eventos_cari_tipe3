@@ -8,56 +8,99 @@ class InventoryScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Inventario'),
-        centerTitle: true,
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(
-              Icons.inventory,
-              size: 100,
+      body: Column(
+        children: [
+          Container(
+            height: 90,
+            width: double.infinity,
+            decoration: const BoxDecoration(
               color: Colors.green,
-            ),
-            const SizedBox(height: 20),
-            const Text(
-              'Bienvenido al Inventario',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 40),
-            ElevatedButton.icon(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const AdmissionForm()),
-                );
-              },
-              icon: const Icon(Icons.add, color: Colors.white),
-              label: const Text('Agregar Material'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
-                foregroundColor: Colors.white, // Cambia el color del texto a blanco
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(32),
+                bottomRight: Radius.circular(32),
+              ),
+              gradient: LinearGradient(
+                colors: [Colors.green, Color(0xFFB2FF59)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
               ),
             ),
-            const SizedBox(height: 20),
-            ElevatedButton.icon(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const WithdrawalForm()),
-                );
-              },
-              icon: const Icon(Icons.remove, color: Colors.white),
-              label: const Text('Retirar Material'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
-                foregroundColor: Colors.white, // Cambia el color del texto a blanco
+            alignment: Alignment.bottomLeft,
+            padding: const EdgeInsets.only(left: 120, bottom: 10),
+            child: const Text(
+              'Inventario',
+              style: TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
               ),
             ),
-          ],
-        ),
+          ),
+          const SizedBox(height: 40),
+          const Icon(
+            Icons.inventory,
+            size: 80,
+            color: Colors.green,
+          ),
+          const SizedBox(height: 20),
+          const Text(
+            'Bienvenido al Inventario',
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 40),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 32.0),
+            child: Column(
+              children: [
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const AdmissionForm()),
+                      );
+                    },
+                    icon: const Icon(Icons.add),
+                    label: const Text('Agregar Material'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const WithdrawalForm()),
+                      );
+                    },
+                    icon: const Icon(Icons.remove),
+                    label: const Text('Retirar Material'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
