@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../widgets/admission_form.dart';
 import '../widgets/withdrawal_form.dart';
-import '../widgets/inventory_history.dart';
+
 class InventoryScreen extends StatelessWidget {
   const InventoryScreen({super.key});
 
