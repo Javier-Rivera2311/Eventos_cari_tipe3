@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_app/screens/eventos.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -92,6 +93,20 @@ class HomeScreen extends StatelessWidget {
                     label: 'Personal',
                     color: Colors.purple,
                     onTap: () {},
+                  ),
+                  _buildStyledButton(
+                    context,
+                    icon: Icons.event,
+                    label: 'Eventos',
+                    color: Colors.teal,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const EventosScreen(),
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),
