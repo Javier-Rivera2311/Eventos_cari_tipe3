@@ -1,0 +1,45 @@
+flutter/ephemeral/
+windows/flutter/ephemeral/
+
+# Visual Studio user-specific files.
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Visual Studio build-related files.
+x64/
+x86/
+
+# Visual Studio cache files
+# files ending in .cache can be ignored
+*.[Cc]ache
+# but keep track of directories ending in .cache
+!*.[Cc]ache/
+# Flutter/Dart related
+.dart_tool/
+.packages
+.flutter-plugins
+.flutter-plugins-dependencies
+.melos_tool/
+pubspec.lock
+
+# Build outputs
+build/
+linux/
+windows/
+macos/
+android/
+
+# IDEs
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# Flutter dependencies
+**/ephemeral/
+**/*.pdb
+**/*.dll
+**/*.exe
