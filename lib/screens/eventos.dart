@@ -103,7 +103,21 @@ class _EventosScreenState extends State<EventosScreen> {
                   icon: Icons.info_outline,
                   label: 'Estado del Evento',
                   color: Colors.teal,
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => EstadoEventosScreen(
+                          eventos: _eventos,
+                          onActualizarEstado: (index, nuevoEstado) {
+                            setState(() {
+                              _eventos[index]['estado'] = nuevoEstado;
+                            });
+                          },
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ],
             ),
@@ -249,6 +263,72 @@ class ListaEventosScreen extends StatelessWidget {
             title: Text(evento['nombre'] ?? 'Sin nombre'),
             subtitle: Text(
                 'Fecha: ${evento['fecha'].toString().split(' ')[0]}\nUbicación: ${evento['ubicacion']}'),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class EstadoEventosScreen extends StatelessWidget {
+  final List<Map<String, dynamic>> eventos;
+  final Function(int, String) onActualizarEstado;
+
+  const EstadoEventosScreen({
+    super.key,
+    required this.eventos,
+    required this.onActualizarEstado,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Estado de los Eventos')),
+      body: ListView.builder(
+        itemCount: eventos.length,
+        itemBuilder: (context, index) {
+          final evento = eventos[index];
+          return Card(
+            margin: const EdgeInsets.all(8.0),
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    evento['nombre'] ?? 'Sin nombre',
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text('Fecha: ${evento['fecha'].toString().split(' ')[0]}'),
+                  Text(
+                      'Ubicación: ${evento['ubicacion'] ?? 'No especificada'}'),
+                  const SizedBox(height: 12),
+                  DropdownButton<String>(
+                    value: evento['estado'] ?? 'Pendiente',
+                    onChanged: (String? nuevoEstado) {
+                      if (nuevoEstado != null) {
+                        onActualizarEstado(index, nuevoEstado);
+                      }
+                    },
+                    items: [
+                      'Pendiente',
+                      'En progreso',
+                      'Completado',
+                      'Cancelado'
+                    ].map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                  ),
+                ],
+              ),
+            ),
           );
         },
       ),
