@@ -34,7 +34,6 @@ class _HomePageState extends State<HomePage> {
     Color(0xFF3A7F54),
     Color(0xFF3A7F54),
     Color(0xFF3A7F54)
-
   ];
 
   @override

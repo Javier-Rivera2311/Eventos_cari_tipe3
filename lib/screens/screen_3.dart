@@ -112,118 +112,179 @@ class _Screen3State extends State<Screen3> {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(titulo),
-        leading: (mostrarFormulario || mostrarLista || mostrarHistorial)
-            ? IconButton(
-                icon: const Icon(Icons.arrow_back),
-                onPressed: () {
-                  setState(() {
-                    mostrarFormulario = false;
-                    mostrarLista = false;
-                    mostrarHistorial = false;
-                    clienteEditandoIndex = null;
-                    clienteSeleccionadoIndex = null;
-                    _limpiarFormulario();
-                  });
-                },
-              )
-            : null,
+      backgroundColor: const Color(0xFFF9F9F9),
+      body: Column(
+        children: [
+          Container(
+            height: 100,
+            width: double.infinity,
+            decoration: const BoxDecoration(
+              color: Colors.blue,
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(30),
+                bottomRight: Radius.circular(30),
+              ),
+            ),
+            padding: const EdgeInsets.only(top: 10, left: 16, right: 16),
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                if (mostrarFormulario || mostrarLista || mostrarHistorial)
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: IconButton(
+                      icon: const Icon(Icons.arrow_back, color: Colors.white),
+                      onPressed: () {
+                        setState(() {
+                          mostrarFormulario = false;
+                          mostrarLista = false;
+                          mostrarHistorial = false;
+                          clienteEditandoIndex = null;
+                          clienteSeleccionadoIndex = null;
+                          _limpiarFormulario();
+                        });
+                      },
+                    ),
+                  ),
+                Center(
+                  child: Text(
+                    titulo,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 26,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: mostrarFormulario
+                  ? _buildFormulario()
+                  : mostrarLista
+                      ? _buildListaClientes()
+                      : mostrarHistorial
+                          ? _buildHistorialClientes()
+                          : _buildVistaBotonesBonitos(),
+            ),
+          ),
+        ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: mostrarFormulario
-            ? _buildFormulario()
-            : mostrarLista
-                ? _buildListaClientes()
-                : mostrarHistorial
-                    ? _buildHistorialClientes()
-                    : _buildMenuPrincipal(),
+    );
+  }
+
+  Widget _buildVistaBotonesBonitos() {
+    return ListView(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      children: [
+        _buildBoton(
+          Colors.blue.shade600,
+          Icons.person_add,
+          'Registrar Nuevo Cliente',
+          '',
+          () => _abrirFormulario(),
+        ),
+        _buildBoton(
+          Colors.blue.shade800,
+          Icons.list,
+          'Lista de Clientes',
+          '',
+          () => setState(() => mostrarLista = true),
+        ),
+        _buildBoton(
+          Colors.blue.shade900,
+          Icons.history,
+          'Historial de Evento por Cliente',
+          '',
+          () => setState(() => mostrarHistorial = true),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildBoton(Color color, IconData icon, String titulo,
+      String subtitulo, VoidCallback onPressed) {
+    return GestureDetector(
+      onTap: onPressed,
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(24),
+        ),
+        child: Row(
+          children: [
+            Icon(icon, color: Colors.white, size: 40),
+            const SizedBox(width: 20),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(titulo,
+                    style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold)),
+                if (subtitulo.isNotEmpty)
+                  Text(subtitulo,
+                      style:
+                          const TextStyle(color: Colors.white70, fontSize: 12)),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildFormulario() {
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            clienteEditandoIndex != null
-                ? 'Edita los datos del cliente:'
-                : 'Por favor ingrese los siguientes datos del nuevo cliente:',
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 16),
-          const Text('Nombre completo:'),
-          TextFormField(
+    return Column(
+      children: [
+        TextField(
             controller: _nombreController,
-            decoration: const InputDecoration(
-              labelText: 'Nombre',
-              border: OutlineInputBorder(),
-            ),
-          ),
-          const SizedBox(height: 16),
-          const Text('Email:'),
-          TextFormField(
+            decoration: const InputDecoration(labelText: 'Nombre')),
+        TextField(
             controller: _emailController,
-            decoration: const InputDecoration(
-              labelText: 'Email',
-              border: OutlineInputBorder(),
-            ),
-            keyboardType: TextInputType.emailAddress,
-          ),
-          const SizedBox(height: 16),
-          const Text('Contacto:'),
-          TextFormField(
+            decoration: const InputDecoration(labelText: 'Email')),
+        TextField(
             controller: _contactoController,
-            decoration: const InputDecoration(
-              labelText: 'Número telefónico',
-              border: OutlineInputBorder(),
-            ),
-            keyboardType: TextInputType.phone,
-          ),
-          const SizedBox(height: 16),
-          const Text('Dirección:'),
-          TextFormField(
+            decoration: const InputDecoration(labelText: 'Contacto')),
+        TextField(
             controller: _direccionController,
-            decoration: const InputDecoration(
-              labelText: 'Dirección',
-              border: OutlineInputBorder(),
-            ),
-          ),
-          const SizedBox(height: 16),
-          const Text('Información adicional:'),
-          TextFormField(
+            decoration: const InputDecoration(labelText: 'Dirección')),
+        TextField(
             controller: _infoAdicionalController,
-            decoration: const InputDecoration(
-              labelText: '...',
-              border: OutlineInputBorder(),
+            decoration: const InputDecoration(labelText: 'Info adicional')),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            ElevatedButton(
+              onPressed: () => setState(() {
+                mostrarFormulario = false;
+                clienteEditandoIndex = null;
+                _limpiarFormulario();
+              }),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue,
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('Cancelar'),
             ),
-          ),
-          const SizedBox(height: 24),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    mostrarFormulario = false;
-                    clienteEditandoIndex = null;
-                    _limpiarFormulario();
-                  });
-                },
-                child: const Text('Cancelar'),
+            ElevatedButton(
+              onPressed: _guardarCliente,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue,
+                foregroundColor: Colors.white,
               ),
-              ElevatedButton(
-                onPressed: _guardarCliente,
-                child: Text(
-                    clienteEditandoIndex != null ? 'Actualizar' : 'Guardar'),
-              ),
-            ],
-          ),
-        ],
-      ),
+              child:
+                  Text(clienteEditandoIndex != null ? 'Actualizar' : 'Guardar'),
+            ),
+          ],
+        )
+      ],
     );
   }
 
@@ -231,37 +292,23 @@ class _Screen3State extends State<Screen3> {
     if (_clientes.isEmpty) {
       return const Center(child: Text('No hay clientes registrados.'));
     }
-
     return ListView.builder(
       itemCount: _clientes.length,
       itemBuilder: (context, index) {
         final cliente = _clientes[index];
-        return Card(
-          child: ListTile(
-            title: Text(cliente.nombre),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Email: ${cliente.email}'),
-                Text('Teléfono: ${cliente.contacto}'),
-                Text('Dirección: ${cliente.direccion}'),
-                Text('Info adicional: ${cliente.infoAdicional}'),
-              ],
-            ),
-            trailing: Wrap(
-              spacing: 8,
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.edit),
+        return ListTile(
+          title: Text(cliente.nombre),
+          subtitle: Text(cliente.email),
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              IconButton(
                   onPressed: () => _abrirFormulario(index: index),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.delete),
+                  icon: const Icon(Icons.edit)),
+              IconButton(
                   onPressed: () => _eliminarCliente(index),
-                ),
-              ],
-            ),
-            isThreeLine: true,
+                  icon: const Icon(Icons.delete)),
+            ],
           ),
         );
       },
@@ -276,8 +323,6 @@ class _Screen3State extends State<Screen3> {
           final cliente = _clientes[index];
           return ListTile(
             title: Text(cliente.nombre),
-            subtitle: Text('Ver historial de eventos'),
-            trailing: const Icon(Icons.arrow_forward_ios),
             onTap: () {
               setState(() {
                 clienteSeleccionadoIndex = index;
@@ -289,70 +334,27 @@ class _Screen3State extends State<Screen3> {
     } else {
       final cliente = _clientes[clienteSeleccionadoIndex!];
       return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Historial de ${cliente.nombre}',
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 10),
+          Text('Historial de eventos de ${cliente.nombre}'),
           Expanded(
             child: cliente.eventos.isEmpty
-                ? const Text('No hay eventos registrados.')
-                : ListView.builder(
-                    itemCount: cliente.eventos.length,
-                    itemBuilder: (context, i) {
-                      return ListTile(
-                        leading: const Icon(Icons.event),
-                        title: Text(cliente.eventos[i]),
-                      );
-                    },
+                ? const Text('No hay eventos.')
+                : ListView(
+                    children: cliente.eventos
+                        .map((e) => ListTile(title: Text(e)))
+                        .toList(),
                   ),
           ),
-          const SizedBox(height: 10),
           ElevatedButton(
-            onPressed: () {
-              setState(() {
-                clienteSeleccionadoIndex = null;
-              });
-            },
-            child: const Text('Volver a selección'),
-          )
+            onPressed: () => setState(() => clienteSeleccionadoIndex = null),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.blue,
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('Volver'),
+          ),
         ],
       );
     }
-  }
-
-  Widget _buildMenuPrincipal() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        ElevatedButton(
-          onPressed: () => _abrirFormulario(),
-          child: const Text('Registrar Nuevo Cliente'),
-        ),
-        const SizedBox(height: 20),
-        ElevatedButton(
-          onPressed: () {
-            setState(() {
-              mostrarLista = true;
-            });
-          },
-          child: const Text('Lista de Clientes'),
-        ),
-        const SizedBox(height: 20),
-        ElevatedButton(
-          onPressed: () {
-            setState(() {
-              mostrarHistorial = true;
-            });
-          },
-          child: const Text('Historial de Evento por Cliente'),
-        ),
-      ],
-    );
   }
 }
