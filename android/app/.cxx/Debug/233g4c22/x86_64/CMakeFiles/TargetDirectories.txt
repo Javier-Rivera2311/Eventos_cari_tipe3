@@ -1,0 +1,2 @@
+C:/Users/Chumuelo/Desktop/proyecto/Eventos_cari_tipe3/android/app/.cxx/Debug/233g4c22/x86_64/CMakeFiles/edit_cache.dir
+C:/Users/Chumuelo/Desktop/proyecto/Eventos_cari_tipe3/android/app/.cxx/Debug/233g4c22/x86_64/CMakeFiles/rebuild_cache.dir

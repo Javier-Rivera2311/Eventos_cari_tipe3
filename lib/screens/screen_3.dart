@@ -6,14 +6,19 @@ class Screen3 extends StatefulWidget {
   @override
   State<Screen3> createState() => _Screen3State();
 }
+class Evento {
+  String nombre;
+  String estado;
 
+  Evento({required this.nombre, this.estado = 'Pendiente'});
+}
 class Cliente {
   String nombre;
   String email;
   String contacto;
   String direccion;
   String infoAdicional;
-  List<String> eventos;
+  List<Evento> eventos;
 
   Cliente({
     required this.nombre,
@@ -76,6 +81,7 @@ class _Screen3State extends State<Screen3> {
       contacto: _contactoController.text,
       direccion: _direccionController.text,
       infoAdicional: _infoAdicionalController.text,
+      eventos: [],
     );
 
     setState(() {
@@ -338,20 +344,24 @@ class _Screen3State extends State<Screen3> {
           Text('Historial de eventos de ${cliente.nombre}'),
           Expanded(
             child: cliente.eventos.isEmpty
+
                 ? const Text('No hay eventos.')
                 : ListView(
                     children: cliente.eventos
                         .map((e) => ListTile(title: Text(e)))
                         .toList(),
+
                   ),
           ),
           ElevatedButton(
+
             onPressed: () => setState(() => clienteSeleccionadoIndex = null),
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.blue,
               foregroundColor: Colors.white,
             ),
             child: const Text('Volver'),
+
           ),
         ],
       );
