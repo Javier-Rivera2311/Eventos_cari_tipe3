@@ -3,11 +3,6 @@
   "packages": [
     {
       "name": "async",
-{
-  "configVersion": 2,
-  "packages": [
-    {
-      "name": "async",
       "rootUri": "file:///C:/Users/javie/AppData/Local/Pub/Cache/hosted/pub.dev/async-2.11.0",
       "packageUri": "lib/",
       "languageVersion": "2.18"
@@ -193,7 +188,7 @@
       "languageVersion": "3.6"
     }
   ],
-  "generated": "2025-05-06T01:53:59.703922Z",
+  "generated": "2025-05-12T18:12:15.604562Z",
   "generator": "pub",
   "generatorVersion": "3.6.0",
   "flutterRoot": "file:///C:/dev/flutter_windows_3.27.1-stable/flutter",

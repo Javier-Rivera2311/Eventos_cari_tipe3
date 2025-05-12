@@ -344,24 +344,20 @@ class _Screen3State extends State<Screen3> {
           Text('Historial de eventos de ${cliente.nombre}'),
           Expanded(
             child: cliente.eventos.isEmpty
-
                 ? const Text('No hay eventos.')
                 : ListView(
                     children: cliente.eventos
-                        .map((e) => ListTile(title: Text(e)))
+                        .map((e) => ListTile(title: Text(e.nombre))) // Accede a la propiedad 'nombre'
                         .toList(),
-
                   ),
           ),
           ElevatedButton(
-
             onPressed: () => setState(() => clienteSeleccionadoIndex = null),
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.blue,
               foregroundColor: Colors.white,
             ),
             child: const Text('Volver'),
-
           ),
         ],
       );
