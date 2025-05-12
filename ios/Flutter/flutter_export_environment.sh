@@ -1,7 +1,7 @@
 #!/bin/sh
 # This is a generated file; do not edit or check into version control.
-export "FLUTTER_ROOT=C:\dev\flutter"
-export "FLUTTER_APPLICATION_PATH=T:\TIPE3\Eventos_cari_tipe3"
+export "FLUTTER_ROOT=C:\Users\Chumuelo\Downloads\flutter"
+export "FLUTTER_APPLICATION_PATH=C:\Users\Chumuelo\Desktop\proyecto\Eventos_cari_tipe3"
 export "COCOAPODS_PARALLEL_CODE_SIGN=true"
 export "FLUTTER_TARGET=lib\main.dart"
 export "FLUTTER_BUILD_DIR=build"

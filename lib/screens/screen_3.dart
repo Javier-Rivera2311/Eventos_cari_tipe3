@@ -6,14 +6,19 @@ class Screen3 extends StatefulWidget {
   @override
   State<Screen3> createState() => _Screen3State();
 }
+class Evento {
+  String nombre;
+  String estado;
 
+  Evento({required this.nombre, this.estado = 'Pendiente'});
+}
 class Cliente {
   String nombre;
   String email;
   String contacto;
   String direccion;
   String infoAdicional;
-  List<String> eventos;
+  List<Evento> eventos;
 
   Cliente({
     required this.nombre,
@@ -76,6 +81,7 @@ class _Screen3State extends State<Screen3> {
       contacto: _contactoController.text,
       direccion: _direccionController.text,
       infoAdicional: _infoAdicionalController.text,
+      eventos: [],
     );
 
     setState(() {
@@ -301,13 +307,58 @@ class _Screen3State extends State<Screen3> {
           const SizedBox(height: 10),
           Expanded(
             child: cliente.eventos.isEmpty
-                ? const Text('No hay eventos registrados.')
+                ? const Center(child: Text('No hay eventos registrados.'))
                 : ListView.builder(
                     itemCount: cliente.eventos.length,
                     itemBuilder: (context, i) {
-                      return ListTile(
-                        leading: const Icon(Icons.event),
-                        title: Text(cliente.eventos[i]),
+                      final evento = cliente.eventos[i];
+                      return Card(
+                        margin: const EdgeInsets.symmetric(vertical: 8),
+                        child: Padding(
+                          padding: const EdgeInsets.all(12),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      evento.nombre,
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                  DropdownButton<String>(
+                                    value: evento.estado,
+                                    onChanged: (String? nuevoEstado) {
+                                      if (nuevoEstado != null) {
+                                        setState(() {
+                                          evento.estado = nuevoEstado;
+                                        });
+                                      }
+                                    },
+                                    items: [
+                                      'Pendiente',
+                                      'En progreso',
+                                      'Completado',
+                                      'Cancelado'
+                                    ].map<DropdownMenuItem<String>>(
+                                        (String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Text(value),
+                                      );
+                                    }).toList(),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
                       );
                     },
                   ),
@@ -320,7 +371,7 @@ class _Screen3State extends State<Screen3> {
               });
             },
             child: const Text('Volver a selección'),
-          )
+          ),
         ],
       );
     }
