@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'home.dart'; // Importa las pantallas
-import 'screen_3.dart';
-import 'screen_4.dart';
+import 'clientes.dart';
+import 'personal.dart';
 import 'IngresosYGastos.dart';
 import 'inventory.dart';
 import 'eventos.dart';
