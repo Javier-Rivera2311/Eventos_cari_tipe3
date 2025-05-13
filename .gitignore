@@ -43,3 +43,18 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Dart/Flutter related
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+build/
+
+# Ignorar archivos generados específicos
+**/package_config.json
+**/version
+**/local.properties
+**/package_config_subset
+**/pubspec.lock
