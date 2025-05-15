@@ -43,3 +43,22 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+# Archivos específicos de la segunda imagen
+package_config.json
+.dart_tool/package_config.json
+package_config_subset
+.dart_tool/package_config_subset
+local.properties
+android/local.properties
+
+# Carpetas del sistema operativo
+linux/
+macos/
+windows/
+ios/
+android/
+
+# Archivos y carpetas de Flutter/Dart
+.dart_tool/
+pubspec.lock
+/build/

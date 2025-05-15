@@ -6,6 +6,7 @@ import 'IngresosYGastos.dart';
 import 'inventory.dart';
 import 'eventos.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'proveedores_home.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -25,6 +26,7 @@ class _HomePageState extends State<HomePage> {
     const Screen3(), // Llama la vista Screen3
     const Screen4(), // Llama la vista Screen4
     const EventosScreen(),
+    const ProveedoresHome(), // Llama la vista ProveedoresHome
   ];
 
   final colors = [
@@ -32,8 +34,10 @@ class _HomePageState extends State<HomePage> {
     Color(0xFF69B4A1),
     Color(0xFFA4D679),
     Color(0xFF3A7F54),
+    Color.fromARGB(255, 12, 90, 42),
     Color(0xFF3A7F54),
-    Color(0xFF3A7F54)
+    Color(0xFF3A7F54),
+    Color(0xFF3A7F54),
   ];
 
   @override
@@ -103,6 +107,14 @@ class _HomePageState extends State<HomePage> {
               title: const Text('Eventos'),
               onTap: () {
                 setState(() => _currentIndex = 5);
+                Navigator.pop(context); // Cierra el drawer
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.store),
+              title: const Text('Proveedores'),
+              onTap: () {
+                setState(() => _currentIndex = 6);
                 Navigator.pop(context); // Cierra el drawer
               },
             ),
