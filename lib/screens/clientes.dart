@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import '../widgets/lista_clientes.dart';
+import '../widgets/lista_proveedores.dart';
+import '../widgets/historial_eventos_clientes.dart';
 
 class Screen3 extends StatefulWidget {
   const Screen3({super.key});
@@ -6,6 +9,7 @@ class Screen3 extends StatefulWidget {
   @override
   State<Screen3> createState() => _Screen3State();
 }
+
 class Evento {
   String nombre;
   String estado;
@@ -34,6 +38,10 @@ class _Screen3State extends State<Screen3> {
   bool mostrarFormulario = false;
   bool mostrarLista = false;
   bool mostrarHistorial = false;
+  bool mostrarListaClientes = false;
+  bool mostrarListaProveedores = false;
+  bool mostrarFormularioProveedor = false;
+  bool mostrarHistorialEventos = false;
   int? clienteEditandoIndex;
   int? clienteSeleccionadoIndex;
 
@@ -44,6 +52,100 @@ class _Screen3State extends State<Screen3> {
   final _infoAdicionalController = TextEditingController();
 
   final List<Cliente> _clientes = [];
+
+  @override
+  Widget build(BuildContext context) {
+    String titulo;
+    if (mostrarFormulario) {
+      titulo = clienteEditandoIndex != null
+          ? 'Editar Cliente'
+          : 'Formulario de Cliente';
+    } else if (mostrarFormularioProveedor) {
+      titulo = 'Registrar Proveedor';
+    } else if (mostrarLista) {
+      titulo = 'Lista de Clientes';
+    } else if (mostrarHistorial) {
+      titulo = 'Historial de Cliente';
+    } else {
+      titulo = 'Clientes';
+    }
+
+    return Scaffold(
+      backgroundColor: const Color(0xFFF9F9F9),
+      body: Column(
+        children: [
+          Container(
+            height: 100,
+            width: double.infinity,
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Color(0xFFA8D5BA),
+                  Color(0xFF69B4A1),
+                  Color(0xFFA4D679),
+                  Color(0xFF3A7F54),
+                ],
+              ),
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(30),
+                bottomRight: Radius.circular(30),
+              ),
+            ),
+            padding: const EdgeInsets.only(top: 10, left: 16, right: 16),
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                if (mostrarFormulario || mostrarLista || mostrarHistorial || mostrarFormularioProveedor)
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: IconButton(
+                      icon: const Icon(Icons.arrow_back, color: Colors.white),
+                      onPressed: () {
+                        setState(() {
+                          mostrarFormulario = false;
+                          mostrarLista = false;
+                          mostrarHistorial = false;
+                          mostrarFormularioProveedor = false;
+                          clienteEditandoIndex = null;
+                          clienteSeleccionadoIndex = null;
+                          _limpiarFormulario();
+                        });
+                      },
+                    ),
+                  ),
+                Center(
+                  child: Text(
+                    titulo,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 26,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: mostrarFormulario
+                  ? _buildFormulario()
+                  : mostrarFormularioProveedor
+                      ? _buildFormularioProveedor()
+                      : mostrarLista
+                          ? _buildListaClientes()
+                          : mostrarHistorial
+                              ? _buildHistorialClientes()
+                              : _buildVistaBotonesBonitos(),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   void _abrirFormulario({int? index}) {
     if (index != null) {
@@ -102,110 +204,53 @@ class _Screen3State extends State<Screen3> {
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    String titulo;
-    if (mostrarFormulario) {
-      titulo = clienteEditandoIndex != null
-          ? 'Editar Cliente'
-          : 'Formulario de Cliente';
-    } else if (mostrarLista) {
-      titulo = 'Lista de Clientes';
-    } else if (mostrarHistorial) {
-      titulo = 'Historial de Cliente';
-    } else {
-      titulo = 'Clientes';
-    }
-
-    return Scaffold(
-      backgroundColor: const Color(0xFFF9F9F9),
-      body: Column(
-        children: [
-          Container(
-            height: 100,
-            width: double.infinity,
-            decoration: const BoxDecoration(
-              color: Colors.blue,
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(30),
-                bottomRight: Radius.circular(30),
-              ),
-            ),
-            padding: const EdgeInsets.only(top: 10, left: 16, right: 16),
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                if (mostrarFormulario || mostrarLista || mostrarHistorial)
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: IconButton(
-                      icon: const Icon(Icons.arrow_back, color: Colors.white),
-                      onPressed: () {
-                        setState(() {
-                          mostrarFormulario = false;
-                          mostrarLista = false;
-                          mostrarHistorial = false;
-                          clienteEditandoIndex = null;
-                          clienteSeleccionadoIndex = null;
-                          _limpiarFormulario();
-                        });
-                      },
-                    ),
-                  ),
-                Center(
-                  child: Text(
-                    titulo,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 26,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: mostrarFormulario
-                  ? _buildFormulario()
-                  : mostrarLista
-                      ? _buildListaClientes()
-                      : mostrarHistorial
-                          ? _buildHistorialClientes()
-                          : _buildVistaBotonesBonitos(),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildVistaBotonesBonitos() {
     return ListView(
       padding: const EdgeInsets.symmetric(vertical: 10),
       children: [
         _buildBoton(
-          Colors.blue.shade600,
+          const Color(0xFFA8D5BA),
           Icons.person_add,
           'Registrar Nuevo Cliente',
           '',
           () => _abrirFormulario(),
         ),
         _buildBoton(
-          Colors.blue.shade800,
-          Icons.list,
-          'Lista de Clientes',
+          const Color(0xFF69B4A1),
+          Icons.business_center,
+          'Registrar Proveedor',
           '',
-          () => setState(() => mostrarLista = true),
+          () => setState(() => mostrarFormularioProveedor = true),
         ),
         _buildBoton(
-          Colors.blue.shade900,
+          const Color(0xFFA4D679),
+          Icons.people,
+          'Ver Lista de Clientes',
+          '',
+          () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const ListaClientes()),
+          ),
+        ),
+        _buildBoton(
+          const Color(0xFF3A7F54),
+          Icons.business,
+          'Ver Lista de Proveedores',
+          '',
+          () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const ListaProveedores()),
+          ),
+        ),
+        _buildBoton(
+          const Color(0xFF2E5D47),
           Icons.history,
           'Historial de Evento por Cliente',
           '',
-          () => setState(() => mostrarHistorial = true),
+          () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const HistorialEventosClientes()),
+          ),
         ),
       ],
     );
@@ -253,9 +298,6 @@ class _Screen3State extends State<Screen3> {
             controller: _nombreController,
             decoration: const InputDecoration(labelText: 'Nombre')),
         TextField(
-            controller: _emailController,
-            decoration: const InputDecoration(labelText: 'Email')),
-        TextField(
             controller: _contactoController,
             decoration: const InputDecoration(labelText: 'Contacto')),
         TextField(
@@ -274,7 +316,7 @@ class _Screen3State extends State<Screen3> {
                 _limpiarFormulario();
               }),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
+                backgroundColor: const Color(0xFF69B4A1),
                 foregroundColor: Colors.white,
               ),
               child: const Text('Cancelar'),
@@ -282,11 +324,63 @@ class _Screen3State extends State<Screen3> {
             ElevatedButton(
               onPressed: _guardarCliente,
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
+                backgroundColor: const Color(0xFF3A7F54),
                 foregroundColor: Colors.white,
               ),
               child:
                   Text(clienteEditandoIndex != null ? 'Actualizar' : 'Guardar'),
+            ),
+          ],
+        )
+      ],
+    );
+  }
+
+  Widget _buildFormularioProveedor() {
+    return Column(
+      children: [
+        TextField(
+            controller: _nombreController,
+            decoration: const InputDecoration(labelText: 'Nombre del Proveedor')),
+        TextField(
+            controller: _contactoController,
+            decoration: const InputDecoration(labelText: 'Teléfono')),
+        TextField(
+            controller: _direccionController,
+            decoration: const InputDecoration(labelText: 'Dirección')),
+        TextField(
+            controller: _infoAdicionalController,
+            decoration: const InputDecoration(labelText: 'Productos/Servicios')),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            ElevatedButton(
+              onPressed: () => setState(() {
+                mostrarFormularioProveedor = false;
+                _limpiarFormulario();
+              }),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF69B4A1),
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('Cancelar'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                // Aquí podrías guardar el proveedor si tuvieras una lista
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Proveedor registrado exitosamente')),
+                );
+                setState(() {
+                  mostrarFormularioProveedor = false;
+                  _limpiarFormulario();
+                });
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF3A7F54),
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('Guardar'),
             ),
           ],
         )
@@ -347,14 +441,14 @@ class _Screen3State extends State<Screen3> {
                 ? const Text('No hay eventos.')
                 : ListView(
                     children: cliente.eventos
-                        .map((e) => ListTile(title: Text(e.nombre))) // Accede a la propiedad 'nombre'
+                        .map((e) => ListTile(title: Text(e.nombre)))
                         .toList(),
                   ),
           ),
           ElevatedButton(
             onPressed: () => setState(() => clienteSeleccionadoIndex = null),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blue,
+              backgroundColor: const Color(0xFF3A7F54),
               foregroundColor: Colors.white,
             ),
             child: const Text('Volver'),
@@ -364,3 +458,5 @@ class _Screen3State extends State<Screen3> {
     }
   }
 }
+
+

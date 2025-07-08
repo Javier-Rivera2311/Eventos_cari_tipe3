@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../widgets/listado_personal.dart';
 
 class Trabajador {
   String nombre;
@@ -29,6 +30,7 @@ class _Screen4State extends State<Screen4> {
   bool mostrarLista = false;
   bool mostrarAsignacion = false;
   bool mostrarFormulario = false;
+  bool mostrarListadoPersonal = false;
 
   final List<Trabajador> _personal = [];
 
@@ -82,6 +84,8 @@ class _Screen4State extends State<Screen4> {
       titulo = 'Lista de Personal';
     } else if (mostrarAsignacion) {
       titulo = 'Asignación de Tareas';
+    } else if (mostrarListadoPersonal) {
+      titulo = 'Listado Personal';
     } else {
       titulo = 'Personal';
     }
@@ -94,7 +98,16 @@ class _Screen4State extends State<Screen4> {
             height: 100,
             width: double.infinity,
             decoration: const BoxDecoration(
-              color: Colors.purple,
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Color(0xFFA8D5BA),
+                  Color(0xFF69B4A1),
+                  Color(0xFFA4D679),
+                  Color(0xFF3A7F54),
+                ],
+              ),
               borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(30),
                 bottomRight: Radius.circular(30),
@@ -155,21 +168,24 @@ class _Screen4State extends State<Screen4> {
       padding: const EdgeInsets.symmetric(vertical: 10),
       children: [
         _buildBoton(
-          Colors.purple.shade600,
+          const Color(0xFFA8D5BA),
           Icons.person_add,
           'Registrar Nuevo Personal',
           '',
           () => setState(() => mostrarFormulario = true),
         ),
         _buildBoton(
-          Colors.purple.shade800,
+          const Color(0xFF69B4A1),
           Icons.list,
           'Lista de Personal',
           '',
-          () => setState(() => mostrarLista = true),
+          () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const ListadoPersonal()),
+          ),
         ),
         _buildBoton(
-          Colors.purple.shade900,
+          const Color(0xFF3A7F54),
           Icons.assignment_ind,
           'Asignar Tareas',
           '',
@@ -242,7 +258,7 @@ class _Screen4State extends State<Screen4> {
                 _limpiarFormulario();
               }),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.purple,
+                backgroundColor: const Color(0xFF69B4A1),
                 foregroundColor: Colors.white,
               ),
               child: const Text('Cancelar'),
@@ -250,7 +266,7 @@ class _Screen4State extends State<Screen4> {
             ElevatedButton(
               onPressed: _guardarTrabajador,
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.purple,
+                backgroundColor: const Color(0xFF3A7F54),
                 foregroundColor: Colors.white,
               ),
               child: Text(
@@ -405,7 +421,7 @@ class _Screen4State extends State<Screen4> {
               }
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.purple,
+              backgroundColor: const Color(0xFF3A7F54),
               foregroundColor: Colors.white,
             ),
             child: const Text('Asignar'),
@@ -415,3 +431,4 @@ class _Screen4State extends State<Screen4> {
     );
   }
 }
+  
