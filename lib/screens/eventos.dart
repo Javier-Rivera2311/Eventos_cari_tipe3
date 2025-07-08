@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../widgets/eventos_formulario.dart';
+import '../widgets/listado_eventos.dart';
 
 class EventosScreen extends StatefulWidget {
   const EventosScreen({super.key});
@@ -8,76 +10,55 @@ class EventosScreen extends StatefulWidget {
 }
 
 class _EventosScreenState extends State<EventosScreen> {
-  final List<Map<String, dynamic>> _eventos = [];
-
-  void _agregarEvento(Map<String, dynamic> evento) {
-    setState(() {
-      _eventos.add(evento);
-    });
-  }
-
-  void _abrirFormularioEvento() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => CrearEditarEventoScreen(onGuardar: _agregarEvento),
-      ),
-    );
-  }
-
-  void _abrirListaEventos() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => ListaEventosScreen(eventos: _eventos),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
+    // Eliminar las condiciones que devolvían widgets directamente
     return Scaffold(
       backgroundColor: const Color(0xFFF4F6F8),
       body: Column(
         children: [
-          Stack(
-            children: [
-              Container(
-                height: 100,
-                width: double.infinity,
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Color(0xFF00897B), Color(0xFF4DB6AC)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(30),
-                    bottomRight: Radius.circular(30),
-                  ),
-                ),
+          Container(
+            height: 100,
+            width: double.infinity,
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Color(0xFFA8D5BA),
+                  Color(0xFF69B4A1),
+                  Color(0xFFA4D679),
+                  Color(0xFF3A7F54),
+                ],
               ),
-              Positioned(
-                top: 40,
-                left: 10,
-                child: IconButton(
-                  icon: const Icon(Icons.arrow_back, color: Colors.white),
-                  onPressed: () => Navigator.pop(context),
-                ),
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(30),
+                bottomRight: Radius.circular(30),
               ),
-              const Positioned(
-                bottom: 24,
-                left: 60,
-                child: Text(
-                  'Eventos',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 26,
-                    fontWeight: FontWeight.bold,
+            ),
+            padding: const EdgeInsets.only(top: 10, left: 16, right: 16),
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: IconButton(
+                    icon: const Icon(Icons.arrow_back, color: Colors.white),
+                    onPressed: () => Navigator.pop(context),
                   ),
                 ),
-              ),
-            ],
+                const Center(
+                  child: Text(
+                    'Eventos',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 26,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
           const SizedBox(height: 40),
           Padding(
@@ -88,36 +69,22 @@ class _EventosScreenState extends State<EventosScreen> {
               alignment: WrapAlignment.center,
               children: [
                 _buildStyledButton(
+                  icon: Icons.add_circle,
+                  label: 'Crear Evento',
+                  color: const Color(0xFFA8D5BA),
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const EventosFormulario()),
+                  ),
+                ),
+                _buildStyledButton(
                   icon: Icons.list,
                   label: 'Lista de Eventos',
-                  color: Colors.teal.shade700,
-                  onTap: _abrirListaEventos,
-                ),
-                _buildStyledButton(
-                  icon: Icons.edit_calendar,
-                  label: 'Crear / Editar Evento',
-                  color: Colors.teal.shade800,
-                  onTap: _abrirFormularioEvento,
-                ),
-                _buildStyledButton(
-                  icon: Icons.info_outline,
-                  label: 'Estado del Evento',
-                  color: Colors.teal,
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => EstadoEventosScreen(
-                          eventos: _eventos,
-                          onActualizarEstado: (index, nuevoEstado) {
-                            setState(() {
-                              _eventos[index]['estado'] = nuevoEstado;
-                            });
-                          },
-                        ),
-                      ),
-                    );
-                  },
+                  color: const Color(0xFF3A7F54),
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const ListadoEventos()),
+                  ),
                 ),
               ],
             ),
@@ -153,6 +120,34 @@ class _EventosScreenState extends State<EventosScreen> {
     );
   }
 }
+
+
+  Widget _buildStyledButton({
+    required IconData icon,
+    required String label,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return SizedBox(
+      width: 160,
+      height: 60,
+      child: ElevatedButton.icon(
+        onPressed: onTap,
+        icon: Icon(icon),
+        label: Text(label, textAlign: TextAlign.center),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: color,
+          foregroundColor: Colors.white,
+          textStyle: const TextStyle(fontWeight: FontWeight.w600),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          elevation: 4,
+        ),
+      ),
+    );
+  }
+
 
 class CrearEditarEventoScreen extends StatefulWidget {
   final Function(Map<String, dynamic>) onGuardar;

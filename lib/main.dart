@@ -1,6 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:my_app/screens/navigate.dart';
-void main() => runApp(const MyApp());
+import 'package:my_app/screens/home.dart';
+import 'package:my_app/screens/inventory.dart';
+import 'package:my_app/screens/IngresosYGastos.dart';
+import 'package:my_app/screens/clientes.dart';
+import 'package:my_app/screens/personal.dart';
+import 'package:my_app/screens/eventos.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(const MyApp());
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -8,9 +18,15 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-    title:'Material App',
-    debugShowCheckedModeBanner: false,
-    home: HomePage()
+      title: 'Material App',
+      debugShowCheckedModeBanner: false,
+      home: const HomePage(),
+      // Agregar manejo de rutas para evitar errores
+      onGenerateRoute: (settings) {
+        return MaterialPageRoute(
+          builder: (context) => const HomePage(),
+        );
+      },
     );
   }
 }
